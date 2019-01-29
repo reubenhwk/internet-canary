@@ -1,0 +1,32 @@
+{
+	"canaries" : { 
+		"http" : {
+			"targets" : [
+				"www.google.com",
+				"www.facebook.com",
+				"www.amazon.com"
+			],
+			"logfile" : "/tmp/canary-http.log"
+		},
+		"https" : {
+			"targets" : [
+				"www.google.com",
+				"www.facebook.com",
+				"www.amazon.com"
+			],
+			"logfile" : "/tmp/canary-https.log"
+		},
+		"ping" : {
+			"targets" : [
+				"172.23.192.1"
+			],
+			"logfile" : "/tmp/canary-ping.log"
+		},
+		"ping6" : {
+			"targets" : [
+				"fe80::4ab:b2ff:fef1:b6c4"
+			],
+			"logfile" : "/tmp/canary-ping6.log"
+		}
+	}
+}
