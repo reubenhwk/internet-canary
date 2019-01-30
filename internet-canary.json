@@ -7,17 +7,26 @@
                 "https://www.google.com",
                 "http://www.facebook.com",
                 "https://www.facebook.com",
+                "http://www.v6.facebook.com",
+                "https://www.v6.facebook.com",
+                "http://www.netfix.com",
+                "http://www.newegg.com",
+                "http://www.apple.com",
                 "http://www.youtube.com"
             ]
         },
         "ping" : {
             "targets" : [
-                "172.23.192.1"
+                "172.23.192.1",
+                "www.apple.com",
+                "www.facebook.com"
             ]
         },
         "ping6" : {
             "targets" : [
-                "fe80::4ab:b2ff:fef1:b6c4"
+                "fe80::4ab:b2ff:fef1:b6c4",
+                "www.apple.com",
+                "www.v6.facebook.com"
             ]
         }
     }
