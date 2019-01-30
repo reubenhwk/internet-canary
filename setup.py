@@ -7,8 +7,9 @@ setup(name='InternetCanary',
     packages=['InternetCanary'],
     zip_safe=False,
     data_files=[
-	('/etc/init.d', ['internet-canary.conf']),
-	('/etc/internet-canary.d', ['internet-canary.json']),
+        ('/etc/init', ['internet-canary.conf']),
+        ('/etc/internet-canary.d', ['internet-canary.json']),
+        ('/usr/bin', ['internet-canary.py']),
     ]
 )
 

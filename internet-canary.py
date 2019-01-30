@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import InternetCanary
+import time
 
-InternetCanary.run()
-
+while True:
+    InternetCanary.run('/etc/internet-canary.d/internet-canary.json')
+    time.sleep(300)

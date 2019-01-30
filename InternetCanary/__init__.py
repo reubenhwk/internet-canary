@@ -4,31 +4,38 @@ import requests
 import json
 import sys
 import time
+import sqlite3
 
 def _http_probe(url, timeout):
     try:
         r = requests.get(url, timeout=timeout)
         if r.status_code == requests.codes.ok:
-        	return r.elapsed.total_seconds()
+            return r.elapsed.total_seconds()
     except:
         pass
     return -1
 
-def run():
-	with open(sys.argv[1]) as configfile:
-	    config = json.load(configfile)
+def run(config_file_path):
+    with open(config_file_path) as configfile:
+        config = json.load(configfile)
 
-	    with open(config['canaries']['http']['logfile'], 'a') as outfile:
-		for target in config['canaries']['http']['targets']:
-		    url = "http://{}".format(target)
-		    now = time.time()
-		    result = _http_probe(url, 5)
-		    outfile.write("http, {}, {}, {}\n".format(now, url, result))
-		
-	    with open(config['canaries']['https']['logfile'], 'a') as outfile:
-		for target in config['canaries']['https']['targets']:
-		    url = "https://{}".format(target)
-		    now = time.time()
-		    result = _http_probe(url, 5)
-		    outfile.write("https, {}, {}, {}\n".format(now, url, result))
+        conn = sqlite3.connect(config['output'])
+        c = conn.cursor()
+
+        c.execute('''
+            CREATE TABLE IF NOT EXISTS results (
+                id integer primary key,
+                type text,
+                target text,
+                time real,
+                result real)
+        ''')
+
+        for url in config['canaries']['http']['targets']:
+            now = time.time()
+            result = _http_probe(url, 5)
+            c.execute("INSERT INTO results (type, target, time, result) VALUES ('http', ?, ?, ?)", [url, now, result])
+        conn.commit()
+
+        conn.close()
 
