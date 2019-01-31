@@ -2,14 +2,14 @@
 
 from setuptools import setup
 
-setup(name='HelloFlask',
+setup(name='InternetCanaryWebApp',
     version='2.0',
-    packages=['helloflask'],
+    packages=['InternetCanaryWebApp'],
     include_package_data=True,
     zip_safe=False,
     data_files=[
-        ('/var/www/helloflask', ['helloflask.wsgi']),
-        ('/etc/httpd/conf.d', ['helloflask.conf']),
+        ('/var/www/InternetCanaryWebApp', ['InternetCanaryWebApp.wsgi']),
+        ('/etc/httpd/conf.d', ['InternetCanaryWebApp.conf']),
     ]
 )
 

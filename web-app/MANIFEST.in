@@ -1,2 +1,2 @@
-recursive-include helloflask/templates *
-recursive-include helloflask/static *
+recursive-include InternetCanaryWebApp/templates *
+recursive-include InternetCanaryWebApp/static *
