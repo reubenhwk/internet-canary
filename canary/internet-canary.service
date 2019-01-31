@@ -1,0 +1,11 @@
+[Unit]
+Description=Internet Canary
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/internet-canary.py
+
+[Install]
+WantedBy=multi-user.target
+After=network-online.target
+Wants=network-online.target

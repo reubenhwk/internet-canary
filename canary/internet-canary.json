@@ -1,5 +1,5 @@
 {
-    "output" : "/tmp/internet-canary.sqlite",
+    "output" : "/var/lib/internet-canary/internet-canary.db",
     "canaries" : { 
         "http" : {
             "targets" : [

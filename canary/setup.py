@@ -7,7 +7,7 @@ setup(name='InternetCanary',
     packages=['InternetCanary'],
     zip_safe=False,
     data_files=[
-        ('/etc/init', ['internet-canary.conf']),
+        ('/lib/systemd/system', ['internet-canary.service']),
         ('/etc/internet-canary.d', ['internet-canary.json']),
         ('/usr/bin', ['internet-canary.py']),
     ]
