@@ -1,23 +1,8 @@
 <!doctype html>
 <html>
    <body>
-      <table border="1">
-         <thead>
-            <td>Time</td>
-            <td>Result</td>
-         </thead>
-         {% for row in rows %}
-            <tr>
-               <td>{{row[0]}}</td>
-               <td>{{row[1]}}</td>
-            </tr>
+         {% for svg in svgs %}
+            {{ svg }}
          {% endfor %}
-      </table>
-
-      <ul>
-         {% for target in targets %}
-            <li>{{target[0]}}</li>
-         {% endfor %}
-      </ul>
    </body>
 </html>
