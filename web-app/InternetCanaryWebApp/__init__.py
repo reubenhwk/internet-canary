@@ -44,8 +44,4 @@ def simple_hello():
         svg.seek(0)
         svgs.append(svg.buf)
 
-    rows = c.execute('''
-        select time, result from results order by time desc limit 30;
-    ''').fetchall()
-
     return render_template('simple-hello.txt', svgs=svgs)
