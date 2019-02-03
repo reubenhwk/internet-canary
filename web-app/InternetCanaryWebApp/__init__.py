@@ -33,10 +33,13 @@ def simple_hello():
                order by time;
         ''', (target[0], start, end)).fetchall()
 
-        plt.plot([rows[x][1] for x in xrange(len(rows))])
+        plt.plot(
+            [row[0] for row in rows],
+            [row[1] for row in rows],
+        )
         plt.ylabel('response time')
         plt.ylim(0,1)
-        plt.xlim(0,len(rows))
+        plt.xlim(rows[0][0], rows[-1][0])
         plt.title(target[0])
         svg=StringIO.StringIO()
         plt.savefig(svg, format='svg')
