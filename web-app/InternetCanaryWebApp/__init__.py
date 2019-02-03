@@ -22,11 +22,10 @@ def simple_hello():
     ''').fetchall()
 
     end = time.time()
-    start = end - 60 * 60 * 8
+    start = end - 8000
 
     svgs=list()
     for target in targets:
-        # TODO: This selects the most recent points, but in the wrong order.
         rows = c.execute('''
            select time, result from results
                where target = ? and time >= ? and time <= ?
@@ -37,10 +36,17 @@ def simple_hello():
             [row[0] for row in rows],
             [row[1] for row in rows],
         )
-        plt.ylabel('response time')
-        plt.ylim(0,1)
-        plt.xlim(rows[0][0], rows[-1][0])
         plt.title(target[0])
+        plt.ylabel('response time in seconds')
+        plt.ylim(0,1)
+        xmin = rows[0][0]
+        xmax = rows[-1][0]
+        plt.xlim(xmin, xmax)
+        r = range(10)
+        plt.xticks(
+           [(xmax - xmin) * (x / 9.0) + xmin for x in r],
+           [str(x) for x in r],
+        )
         svg=StringIO.StringIO()
         plt.savefig(svg, format='svg')
         plt.close()
