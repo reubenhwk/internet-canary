@@ -28,7 +28,10 @@ def run(config_file_path):
                 type text,
                 target text,
                 time real,
-                result real)
+                result real);
+        ''')
+        c.execute('''
+            CREATE INDEX IF NOT EXISTS target_time ON results (target, time);
         ''')
 
         for url in config['canaries']['http']['targets']:
