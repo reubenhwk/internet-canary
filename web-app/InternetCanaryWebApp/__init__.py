@@ -28,8 +28,8 @@ def simple_hello():
     ''').fetchall()
 
     now = time.time()
-    end = now
     start = now - 60 * 60 * 4
+    end = now
 
     svgs=list()
     for target in targets:
@@ -45,9 +45,9 @@ def simple_hello():
         )
         plt.title(target[0])
         plt.ylabel('response time in seconds')
-        plt.ylim(0,1)
-        xmin = rows[0][0]
-        xmax = rows[-1][0]
+        plt.ylim(0, 3)
+        xmin = start
+        xmax = end
         plt.xlim(xmin, xmax)
         r = range(7)
         xticks = [interpolate(xmin, xmax, x / float(len(r)-1)) for x in r]
