@@ -16,7 +16,11 @@ drop table targets;
 drop table results;
 alter table results2 rename to results;
 
+create index target_time on results (target, time);
+
 commit transaction;
 
 vacuum;
+
+explain query plan select target, time, result from results where time >= 1549172399 and time <= 1549272399 and target = 'http://www.google.com' order by time;
 

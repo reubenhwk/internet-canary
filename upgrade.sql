@@ -10,9 +10,11 @@ insert into results2 select type, targets.id, time, result from results inner jo
 drop table results;
 alter table results2 rename to results;
 
+create index target_time on results (target_id, time);
+
 commit transaction;
 
 vacuum;
 
-select targets.target, time, result from results inner join targets where targets.id = results.target_id;
+explain query plan select targets.target, time, result from results inner join targets where time > 1549172399 and time < 1549272399 and targets.id = results.target_id order by time;
 select count(*) from (select targets.target, time, result from results inner join targets where targets.id = results.target_id);
