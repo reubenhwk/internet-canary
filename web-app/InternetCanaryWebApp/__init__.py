@@ -11,7 +11,7 @@ import StringIO
 app = Flask(__name__)
 
 def epoch_to_human(t):
-    return time.strftime('%I:%M%p', time.localtime(t))
+    return time.strftime('%m/%d\n%I:%M%p', time.localtime(t))
 
 def interpolate(xmin, xmax, ratio):
     return (xmax - xmin) * ratio + xmin
@@ -28,7 +28,7 @@ def simple_hello():
     ''').fetchall()
 
     now = time.time()
-    start = now - 60 * 60 * 4
+    start = now - 60 * 60 * 24
     end = now
 
     svgs=list()
@@ -53,9 +53,7 @@ def simple_hello():
         xticks = [interpolate(xmin, xmax, x / float(len(r)-1)) for x in r]
         plt.xticks(
            xticks,
-           [epoch_to_human(x) for x in xticks],
-           rotation = -45,
-           ha='left'
+           [epoch_to_human(x) for x in xticks]
         )
         plt.tight_layout()
         plt.grid(True, linestyle='--')
