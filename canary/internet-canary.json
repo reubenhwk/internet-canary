@@ -12,7 +12,8 @@
                 "http://www.netfix.com",
                 "http://www.newegg.com",
                 "http://www.apple.com",
-                "http://www.youtube.com"
+                "http://www.youtube.com",
+                "http://localhost"
             ]
         },
         "ping" : {
