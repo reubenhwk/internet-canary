@@ -10,6 +10,12 @@ import StringIO
 
 app = Flask(__name__)
 
+def epoch_to_human(t):
+    return time.strftime('%I:%M%p', time.localtime(t))
+
+def interpolate(xmin, xmax, ratio):
+    return (xmax - xmin) * ratio + xmin
+
 @app.route("/")
 def simple_hello():
 
@@ -21,8 +27,9 @@ def simple_hello():
         select distinct target from results order by target;
     ''').fetchall()
 
-    end = time.time()
-    start = end - 8000
+    now = time.time()
+    end = now
+    start = now - 60 * 60 * 4
 
     svgs=list()
     for target in targets:
@@ -42,11 +49,16 @@ def simple_hello():
         xmin = rows[0][0]
         xmax = rows[-1][0]
         plt.xlim(xmin, xmax)
-        r = range(10)
+        r = range(7)
+        xticks = [interpolate(xmin, xmax, x / float(len(r)-1)) for x in r]
         plt.xticks(
-           [(xmax - xmin) * (x / 9.0) + xmin for x in r],
-           [str(x) for x in r],
+           xticks,
+           [epoch_to_human(x) for x in xticks],
+           rotation = -45,
+           ha='left'
         )
+        plt.tight_layout()
+        plt.grid(True, linestyle='--')
         svg=StringIO.StringIO()
         plt.savefig(svg, format='svg')
         plt.close()
