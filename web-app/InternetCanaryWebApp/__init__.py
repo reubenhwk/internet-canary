@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import sqlite3
 import time
 import matplotlib
@@ -11,13 +11,21 @@ import StringIO
 app = Flask(__name__)
 
 def epoch_to_human(t):
-    return time.strftime('%m/%d\n%I:%M%p', time.localtime(t))
+    return time.strftime('%m/%d/%y\n%I:%M%p', time.localtime(t))
 
 def interpolate(xmin, xmax, ratio):
     return (xmax - xmin) * ratio + xmin
 
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 def simple_hello():
+
+    if request.method == 'POST':
+        start = int(request.form['start'])
+        end = int(request.form['end'])
+    else:
+        now = time.time()
+        start = now - 60 * 60 * 24
+        end = now
 
     conn = sqlite3.connect('/var/lib/internet-canary/internet-canary.db')
 
@@ -26,10 +34,6 @@ def simple_hello():
     targets = c.execute('''
         select distinct target from results order by target;
     ''').fetchall()
-
-    now = time.time()
-    start = now - 60 * 60 * 24
-    end = now
 
     svgs=list()
     for target in targets:
