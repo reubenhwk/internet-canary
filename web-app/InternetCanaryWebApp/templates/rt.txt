@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+  <body>
+    {% for svg in svgs %}
+      {{ svg }}
+    {% endfor %}
+    <form action='http://35.160.69.193/rt' method='get'>
+      start:<br>
+      <input type="text" name="start"><br>
+      end:<br>
+      <input type="text" name="end"><br>
+      <input type="submit" value="Submit">
+    </form>
+  </body>
+</html>
