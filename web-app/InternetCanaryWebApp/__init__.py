@@ -18,6 +18,17 @@ def epoch_to_human(t):
 def interpolate(xmin, xmax, ratio):
     return (xmax - xmin) * ratio + xmin
 
+def default_time_range():
+    try:
+        start = int(request.args.get('start'))
+        end = int(request.args.get('end'))
+    except:
+        now = time.time()
+        start = now - 60 * 60 * 24
+        end = now
+
+    return start, end
+
 @app.route("/")
 def index():
     return '''
@@ -32,13 +43,7 @@ def index():
 @app.route("/rt")
 def reponse_time_page():
 
-    try:
-        start = int(request.form['start'])
-        end = int(request.form['end'])
-    except:
-        now = time.time()
-        start = now - 60 * 60 * 24
-        end = now
+    start, end = default_time_range()
 
     c = conn.cursor()
 
@@ -83,13 +88,7 @@ def reponse_time_page():
 @app.route("/bw")
 def bandwidth_page():
 
-    try:
-        start = int(request.form['start'])
-        end = int(request.form['end'])
-    except:
-        now = time.time()
-        start = now - 60 * 60 * 4
-        end = now
+    start, end = default_time_range()
 
     c = conn.cursor()
 
