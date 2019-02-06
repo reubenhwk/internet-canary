@@ -10,6 +10,8 @@ import StringIO
 
 app = Flask(__name__)
 
+conn = sqlite3.connect('/var/lib/internet-canary/internet-canary.db')
+
 def epoch_to_human(t):
     return time.strftime('%m/%d/%y\n%I:%M%p', time.localtime(t))
 
@@ -26,8 +28,6 @@ def simple_hello():
         now = time.time()
         start = now - 60 * 60 * 24
         end = now
-
-    conn = sqlite3.connect('/var/lib/internet-canary/internet-canary.db')
 
     c = conn.cursor()
 
