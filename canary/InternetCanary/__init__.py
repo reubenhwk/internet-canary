@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 import requests
-import json
+import speedtest
+import sqlite3
 import sys
 import time
-import sqlite3
-import speedtest
+import yaml
 
 def _speedtest_probe():
     st = speedtest.Speedtest()
@@ -26,7 +26,7 @@ def _http_probe(url, timeout):
 
 def run(config_file_path):
     with open(config_file_path) as configfile:
-        config = json.load(configfile)
+        config = yaml.load(configfile)
 
         conn = sqlite3.connect(config['output'])
         c = conn.cursor()
@@ -52,7 +52,7 @@ def run(config_file_path):
             CREATE INDEX IF NOT EXISTS bandwidth_time ON bandwidth_results (time);
         ''')
 
-        for url in config['canaries']['http']['targets']:
+        for url in config['http_targets']:
             now = time.time()
             result = _http_probe(url, 5)
             c.execute("INSERT INTO results (type, target, time, result) VALUES ('http', ?, ?, ?)", [url, now, result])

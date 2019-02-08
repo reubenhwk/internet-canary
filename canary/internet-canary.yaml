@@ -1,0 +1,12 @@
+---
+output: /var/lib/internet-canary/internet-canary.db
+http_targets:
+   - http://localhost
+   - http://www.apple.com
+   - http://www.facebook.com
+   - http://www.gmail.com
+   - http://www.google.com
+   - http://www.netfix.com
+   - http://www.newegg.com
+   - http://www.youtube.com
+...

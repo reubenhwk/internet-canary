@@ -7,10 +7,11 @@ import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
 import StringIO
+import yaml
 
 app = Flask(__name__)
 
-conn = sqlite3.connect('/var/lib/internet-canary/internet-canary.db')
+conn = sqlite3.connect(yaml.load(open('/etc/internet-canary.d/internet-canary.yaml').read())['output'])
 
 def epoch_to_human(t):
     return time.strftime('%m/%d/%y\n%I:%M%p', time.localtime(t))
