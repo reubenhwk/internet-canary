@@ -42,6 +42,44 @@ def index():
     </html>
     '''
 
+def rtsvg(target, start, end):
+
+    c = conn.cursor()
+
+    rows = c.execute('''
+       select time, result from http_canary_results
+           where target = ? and time >= ? and time <= ?
+           order by time;
+    ''', (target, start, end)).fetchall()
+
+    plt.plot(
+        [row[0] for row in rows],
+        [row[1] for row in rows],
+    )
+
+    plt.title(target)
+    plt.ylabel('response time in seconds')
+    plt.ylim(0, 3)
+
+    xmin = start
+    xmax = end
+    plt.xlim(xmin, xmax)
+    r = range(7)
+    xticks = [interpolate(xmin, xmax, x / float(len(r)-1)) for x in r]
+    plt.xticks(
+       xticks,
+       [epoch_to_human(x) for x in xticks]
+    )
+    plt.tight_layout()
+    plt.grid(True, linestyle='--')
+    svg=StringIO.StringIO()
+    plt.savefig(svg, format='svg')
+    plt.close()
+    svg.seek(0)
+
+    return svg.buf
+
+
 @app.route("/rt")
 def reponse_time_page():
 
@@ -51,35 +89,9 @@ def reponse_time_page():
 
     svgs=list()
     for target in config['http_targets']:
-        rows = c.execute('''
-           select time, result from http_canary_results
-               where target = ? and time >= ? and time <= ?
-               order by time;
-        ''', (target, start, end)).fetchall()
-
-        plt.plot(
-            [row[0] for row in rows],
-            [row[1] for row in rows],
+        svgs.append(
+	   rtsvg(target, start, end)
         )
-        plt.title(target)
-        plt.ylabel('response time in seconds')
-        plt.ylim(0, 3)
-        xmin = start
-        xmax = end
-        plt.xlim(xmin, xmax)
-        r = range(7)
-        xticks = [interpolate(xmin, xmax, x / float(len(r)-1)) for x in r]
-        plt.xticks(
-           xticks,
-           [epoch_to_human(x) for x in xticks]
-        )
-        plt.tight_layout()
-        plt.grid(True, linestyle='--')
-        svg=StringIO.StringIO()
-        plt.savefig(svg, format='svg')
-        plt.close()
-        svg.seek(0)
-        svgs.append(svg.buf)
 
     return render_template('rt.txt', svgs=svgs)
 
