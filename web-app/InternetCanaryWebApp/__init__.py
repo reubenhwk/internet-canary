@@ -42,7 +42,20 @@ def index():
     </html>
     '''
 
-def rtsvg(target, start, end):
+@app.route("/rt/svg")
+def rtsvg(target=None, start=None, end=None):
+
+    try:
+        if target == None:
+            target = request.args.get('target')
+
+        if start == None:
+            start = int(request.args.get('start'))
+
+        if end == None:
+            end = int(request.args.get('end'))
+    except:
+        return ":)"
 
     c = conn.cursor()
 
@@ -67,8 +80,8 @@ def rtsvg(target, start, end):
     r = range(7)
     xticks = [interpolate(xmin, xmax, x / float(len(r)-1)) for x in r]
     plt.xticks(
-       xticks,
-       [epoch_to_human(x) for x in xticks]
+        xticks,
+        [epoch_to_human(x) for x in xticks]
     )
     plt.tight_layout()
     plt.grid(True, linestyle='--')
@@ -79,7 +92,6 @@ def rtsvg(target, start, end):
 
     return svg.buf
 
-
 @app.route("/rt")
 def reponse_time_page():
 
@@ -87,18 +99,24 @@ def reponse_time_page():
 
     c = conn.cursor()
 
-    svgs=list()
-    for target in config['http_targets']:
-        svgs.append(
-	   rtsvg(target, start, end)
-        )
+    return render_template(
+        'rt.txt',
+        svgs=[
+            rtsvg(target, start, end) for target in config['http_targets']
+        ]
+    )
 
-    return render_template('rt.txt', svgs=svgs)
+@app.route("/bw/svg")
+def bwsvg(start=None, end=None):
 
-@app.route("/bw")
-def bandwidth_page():
+    try:
+        if start == None:
+            start = int(request.args.get('start'))
 
-    start, end = default_time_range()
+        if end == None:
+            end = int(request.args.get('end'))
+    except:
+        return ":)"
 
     c = conn.cursor()
 
@@ -134,4 +152,13 @@ def bandwidth_page():
     plt.close()
     svg.seek(0)
 
-    return render_template('bw.txt', svg=svg.buf)
+    return svg.buf
+
+@app.route("/bw")
+def bandwidth_page():
+
+    start, end = default_time_range()
+
+    svg = bwsvg(start, end)
+
+    return render_template('bw.txt', svg=svg)
