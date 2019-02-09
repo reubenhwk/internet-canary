@@ -11,7 +11,8 @@ import yaml
 
 app = Flask(__name__)
 
-conn = sqlite3.connect(yaml.load(open('/etc/internet-canary.d/internet-canary.yaml').read())['output'])
+config = yaml.load(open('/etc/internet-canary.d/internet-canary.yaml').read())
+conn = sqlite3.connect(config['dbpath'])
 
 def epoch_to_human(t):
     return time.strftime('%m/%d/%y\n%I:%M%p', time.localtime(t))
@@ -48,23 +49,19 @@ def reponse_time_page():
 
     c = conn.cursor()
 
-    targets = c.execute('''
-        select distinct target from results order by target;
-    ''').fetchall()
-
     svgs=list()
-    for target in targets:
+    for target in config['http_targets']:
         rows = c.execute('''
-           select time, result from results
+           select time, result from http_canary_results
                where target = ? and time >= ? and time <= ?
                order by time;
-        ''', (target[0], start, end)).fetchall()
+        ''', (target, start, end)).fetchall()
 
         plt.plot(
             [row[0] for row in rows],
             [row[1] for row in rows],
         )
-        plt.title(target[0])
+        plt.title(target)
         plt.ylabel('response time in seconds')
         plt.ylim(0, 3)
         xmin = start
@@ -94,7 +91,7 @@ def bandwidth_page():
     c = conn.cursor()
 
     rows = c.execute('''
-       select time, up_speed, down_speed from bandwidth_results
+       select time, up_speed, down_speed from bandwidth_canary_results
            where time >= ? and time <= ?
            order by time;
     ''', (start, end)).fetchall()

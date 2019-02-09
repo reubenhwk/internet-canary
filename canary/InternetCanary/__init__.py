@@ -1,13 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
+import pathlib
 import requests
 import speedtest
 import sqlite3
 import sys
 import time
-import yaml
 
-def _speedtest_probe():
+def speedtest_probe():
     st = speedtest.Speedtest()
     st.get_best_server()
     down_speed = st.download(callback=speedtest.do_nothing)
@@ -15,52 +15,64 @@ def _speedtest_probe():
     return down_speed, up_speed
 
 
-def _http_probe(url, timeout):
+def http_probe(url, timeout):
     try:
         r = requests.get(url, timeout=timeout)
         if r.status_code == requests.codes.ok:
             return r.elapsed.total_seconds()
     except:
         pass
+
     return -1
 
-def run(config_file_path):
-    with open(config_file_path) as configfile:
-        config = yaml.load(configfile)
+def setup_db(dbpath):
 
-        conn = sqlite3.connect(config['output'])
-        c = conn.cursor()
+    path = pathlib.Path(dbpath)
+    path.parent.mkdir(parents=True, exist_ok=True)
 
-        c.execute('''
-            CREATE TABLE IF NOT EXISTS results (
-                id integer primary key,
-                type text,
-                target text,
-                time real,
-                result real);
-        ''')
-        c.execute('''
-            CREATE INDEX IF NOT EXISTS target_time ON results (target, time);
-        ''')
-        c.execute('''
-            CREATE TABLE IF NOT EXISTS bandwidth_results (
-                time real,
-                down_speed integer,
-                up_speed integer);
-        ''')
-        c.execute('''
-            CREATE INDEX IF NOT EXISTS bandwidth_time ON bandwidth_results (time);
-        ''')
+    db = sqlite3.connect(dbpath)
+    cursor = db.cursor()
 
-        for url in config['http_targets']:
-            now = time.time()
-            result = _http_probe(url, 5)
-            c.execute("INSERT INTO results (type, target, time, result) VALUES ('http', ?, ?, ?)", [url, now, result])
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS http_canary_results (
+            target text not null,
+            time real not null,
+            result real not null);
+    ''')
+    cursor.execute('''
+        CREATE INDEX IF NOT EXISTS target_time ON http_canary_results (target, time);
+    ''')
 
-	bandwidth = _speedtest_probe()
-        c.execute("INSERT INTO bandwidth_results (time, down_speed, up_speed) VALUES (?, ?, ?)", [now, bandwidth[0], bandwidth[1]])
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS bandwidth_canary_results (
+            time real not null,
+            down_speed integer not null,
+            up_speed integer not null);
+    ''')
+    cursor.execute('''
+        CREATE INDEX IF NOT EXISTS bandwidth_time ON bandwidth_canary_results (time);
+    ''')
 
-        conn.commit()
+    db.commit()
 
-        conn.close()
+    return db
+
+def http_canary(db, http_targets):
+    cursor = db.cursor()
+    for url in http_targets:
+        now = time.time()
+        result = http_probe(url, 5)
+        cursor.execute('''
+           INSERT INTO http_canary_results (target, time, result)
+           VALUES (?, ?, ?)
+        ''', [url, now, result])
+
+def bandwidth_canary(db):
+    now = time.time()
+    bandwidth = speedtest_probe()
+    cursor = db.cursor()
+    cursor.execute('''
+        INSERT INTO bandwidth_canary_results (time, down_speed, up_speed)
+        VALUES (?, ?, ?)
+    ''', [now, bandwidth[0], bandwidth[1]])
 

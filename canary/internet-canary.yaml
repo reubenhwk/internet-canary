@@ -1,7 +1,7 @@
 ---
-output: /var/lib/internet-canary/internet-canary.db
+dbpath: /var/lib/internet-canary/internet-canary.db
 http_targets:
-   - http://localhost
+   - http://localhost/bw
    - http://www.apple.com
    - http://www.facebook.com
    - http://www.gmail.com

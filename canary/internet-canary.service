@@ -3,7 +3,7 @@ Description=Internet Canary
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/internet-canary.py
+ExecStart=/usr/bin/internet-canary.py /etc/internet-canary.d/internet-canary.yaml
 
 [Install]
 WantedBy=multi-user.target
