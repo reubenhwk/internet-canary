@@ -36,11 +36,76 @@ def index():
     return '''
     <html>
        <ul>
-         <li><a href='http://35.160.69.193/rt'>rt</a></li>
          <li><a href='http://35.160.69.193/bw'>bw</a></li>
+         <li><a href='http://35.160.69.193/dns'>dns</a></li>
+         <li><a href='http://35.160.69.193/rt'>rt</a></li>
        </ul>
     </html>
     '''
+
+@app.route("/dns/svg")
+def dnssvg(target=None, start=None, end=None):
+
+    try:
+        if target == None:
+            target = request.args.get('target')
+
+        if start == None:
+            start = int(request.args.get('start'))
+
+        if end == None:
+            end = int(request.args.get('end'))
+    except:
+        return ":)"
+
+    c = conn.cursor()
+
+    rows = c.execute('''
+       select time, result from dns_canary_results
+           where target = ? and time >= ? and time <= ?
+           order by time;
+    ''', (target, start, end)).fetchall()
+
+    plt.plot(
+        [row[0] for row in rows],
+        [row[1] for row in rows],
+    )
+
+    plt.title(target)
+    plt.ylabel('response time in seconds')
+    plt.ylim(0, 1)
+
+    xmin = start
+    xmax = end
+    plt.xlim(xmin, xmax)
+    r = range(7)
+    xticks = [interpolate(xmin, xmax, x / float(len(r)-1)) for x in r]
+    plt.xticks(
+        xticks,
+        [epoch_to_human(x) for x in xticks]
+    )
+    plt.tight_layout()
+    plt.grid(True, linestyle='--')
+    svg=StringIO.StringIO()
+    plt.savefig(svg, format='svg')
+    plt.close()
+    svg.seek(0)
+
+    return svg.buf
+
+@app.route("/dns")
+def dns_reponse_time_page():
+
+    start, end = default_time_range()
+
+    c = conn.cursor()
+
+    return render_template(
+        'rt.txt',
+        svgs=[
+            dnssvg(target, start, end) for target in config['dns_targets']
+        ]
+    )
 
 @app.route("/rt/svg")
 def rtsvg(target=None, start=None, end=None):
@@ -93,7 +158,7 @@ def rtsvg(target=None, start=None, end=None):
     return svg.buf
 
 @app.route("/rt")
-def reponse_time_page():
+def http_reponse_time_page():
 
     start, end = default_time_range()
 
