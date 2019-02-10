@@ -6,8 +6,16 @@ import speedtest
 import sqlite3
 import sys
 import time
+import dns.resolver
 
-def speedtest_probe():
+def probe_dns(hostname, record_type):
+    resolver = dns.resolver.Resolver()
+    start = time.time()
+    resolver.query(hostname, record_type)
+    end = time.time()
+    return end - start
+
+def probe_speedtest():
     st = speedtest.Speedtest()
     st.get_best_server()
     down_speed = st.download(callback=speedtest.do_nothing)
@@ -15,7 +23,7 @@ def speedtest_probe():
     return down_speed, up_speed
 
 
-def http_probe(url, timeout):
+def probe_http(url, timeout):
     try:
         r = requests.get(url, timeout=timeout)
         if r.status_code == requests.codes.ok:
@@ -61,7 +69,7 @@ def http_canary(db, http_targets):
     cursor = db.cursor()
     for url in http_targets:
         now = time.time()
-        result = http_probe(url, 5)
+        result = probe_http(url, 5)
         cursor.execute('''
            INSERT INTO http_canary_results (target, time, result)
            VALUES (?, ?, ?)
@@ -69,10 +77,11 @@ def http_canary(db, http_targets):
 
 def bandwidth_canary(db):
     now = time.time()
-    bandwidth = speedtest_probe()
+    bandwidth = probe_speedtest()
     cursor = db.cursor()
     cursor.execute('''
         INSERT INTO bandwidth_canary_results (time, down_speed, up_speed)
         VALUES (?, ?, ?)
     ''', [now, bandwidth[0], bandwidth[1]])
+
 
