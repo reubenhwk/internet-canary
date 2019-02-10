@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import InternetCanary
+from InternetCanary import canary
 import time
 import sys
 import logging as log
@@ -12,17 +12,17 @@ if __name__ == '__main__':
 
     config = yaml.load(open(sys.argv[1]).read())
 
-    db = InternetCanary.setup_db(config['dbpath'])
+    db = canary.setup_db(config['dbpath'])
 
     while True:
         log.info('running dns canary...')
-        InternetCanary.canary_dns(db, config['dns_targets'])
+        canary.canary_dns(db, config['dns_targets'])
 
         log.info('running http canary...')
-        InternetCanary.canary_http(db, config['http_targets'])
+        canary.canary_http(db, config['http_targets'])
 
         log.info('running bandwidth canary...')
-        InternetCanary.canary_bandwidth(db)
+        canary.canary_bandwidth(db)
 
         db.commit()
 

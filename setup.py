@@ -3,13 +3,16 @@
 from setuptools import setup
 
 setup(name='InternetCanary',
-    version='1.0',
+    version='3.0',
     packages=['InternetCanary'],
     zip_safe=False,
+    include_package_data=True,
     data_files=[
         ('/lib/systemd/system', ['internet-canary.service']),
         ('/etc/internet-canary.d', ['internet-canary.yaml']),
         ('/usr/bin', ['internet-canary.py']),
+        ('/var/www/InternetCanaryWebApp', ['InternetCanaryWebApp.wsgi']),
+        ('/etc/httpd/conf.d', ['InternetCanaryWebApp.conf']),
     ]
 )
 
