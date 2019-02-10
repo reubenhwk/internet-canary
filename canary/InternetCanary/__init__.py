@@ -61,21 +61,42 @@ def setup_db(dbpath):
         CREATE INDEX IF NOT EXISTS bandwidth_time ON bandwidth_canary_results (time);
     ''')
 
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS dns_canary_results (
+            target text not null,
+            time real not null,
+            result real not null);
+    ''')
+    cursor.execute('''
+        CREATE INDEX IF NOT EXISTS dns_time ON dns_canary_results (time);
+    ''')
+
+
     db.commit()
 
     return db
 
-def http_canary(db, http_targets):
+def canary_dns(db, targets):
     cursor = db.cursor()
-    for url in http_targets:
+    for target in targets:
         now = time.time()
-        result = probe_http(url, 5)
+        result = probe_dns(target, 'A')
+        cursor.execute('''
+           INSERT INTO dns_canary_results (target, time, result)
+           VALUES (?, ?, ?)
+        ''', [target, now, result])
+
+def canary_http(db, targets):
+    cursor = db.cursor()
+    for target in targets:
+        now = time.time()
+        result = probe_http(target, 5)
         cursor.execute('''
            INSERT INTO http_canary_results (target, time, result)
            VALUES (?, ?, ?)
-        ''', [url, now, result])
+        ''', [target, now, result])
 
-def bandwidth_canary(db):
+def canary_bandwidth(db):
     now = time.time()
     bandwidth = probe_speedtest()
     cursor = db.cursor()

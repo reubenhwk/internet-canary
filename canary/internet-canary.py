@@ -15,11 +15,14 @@ if __name__ == '__main__':
     db = InternetCanary.setup_db(config['dbpath'])
 
     while True:
+        log.info('running dns canary...')
+        InternetCanary.canary_dns(db, config['dns_targets'])
+
         log.info('running http canary...')
-        InternetCanary.http_canary(db, config['http_targets'])
+        InternetCanary.canary_http(db, config['http_targets'])
 
         log.info('running bandwidth canary...')
-        InternetCanary.bandwidth_canary(db)
+        InternetCanary.canary_bandwidth(db)
 
         db.commit()
 

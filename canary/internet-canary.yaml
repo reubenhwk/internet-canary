@@ -9,4 +9,12 @@ http_targets:
    - http://www.netfix.com
    - http://www.newegg.com
    - http://www.youtube.com
+dns_targets:
+   - apple.com
+   - facebook.com
+   - gmail.com
+   - google.com
+   - netfix.com
+   - newegg.com
+   - youtube.com
 ...
