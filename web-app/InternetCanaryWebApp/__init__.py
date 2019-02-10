@@ -6,7 +6,7 @@ import time
 import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
-import StringIO
+import io
 import yaml
 
 app = Flask(__name__)
@@ -150,7 +150,7 @@ def rtsvg(target=None, start=None, end=None):
     )
     plt.tight_layout()
     plt.grid(True, linestyle='--')
-    svg=StringIO.StringIO()
+    svg=io.StringIO()
     plt.savefig(svg, format='svg')
     plt.close()
     svg.seek(0)
@@ -212,7 +212,7 @@ def bwsvg(start=None, end=None):
     )
     plt.tight_layout()
     plt.grid(True, linestyle='--')
-    svg=StringIO.StringIO()
+    svg=io.StringIO()
     plt.savefig(svg, format='svg')
     plt.close()
     svg.seek(0)
