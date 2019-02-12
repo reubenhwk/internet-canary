@@ -1,2 +1,0 @@
-recursive-include InternetCanaryWebApp/templates *
-recursive-include InternetCanaryWebApp/static *

@@ -1,0 +1,3 @@
+include internet-canary.yaml
+recursive-include InternetCanary/templates *
+recursive-include InternetCanary/static *
