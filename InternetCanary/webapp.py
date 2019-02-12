@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for
 import sqlite3
 import time
 import matplotlib
@@ -12,7 +12,8 @@ import yaml
 app = Flask(__name__)
 
 config = yaml.load(open('/etc/internet-canary.d/internet-canary.yaml').read())
-conn = sqlite3.connect(config['dbpath'])
+def getdb():
+    return sqlite3.connect(config['dbpath'])
 
 def epoch_to_human(t):
     return time.strftime('%m/%d/%y\n%I:%M%p', time.localtime(t))
@@ -36,12 +37,16 @@ def index():
     return '''
     <html>
        <ul>
-         <li><a href='http://35.160.69.193/bw'>bw</a></li>
-         <li><a href='http://35.160.69.193/dns'>dns</a></li>
-         <li><a href='http://35.160.69.193/rt'>rt</a></li>
+         <li><a href='{}'>bw</a></li>
+         <li><a href='{}'>dns</a></li>
+         <li><a href='{}'>rt</a></li>
        </ul>
     </html>
-    '''
+    '''.format(
+        url_for('bandwidth_page'),
+        url_for('dns_reponse_time_page'),
+        url_for('http_response_time_page')
+    )
 
 @app.route("/dns/svg")
 def dnssvg(target=None, start=None, end=None):
@@ -58,6 +63,7 @@ def dnssvg(target=None, start=None, end=None):
     except:
         return ":)"
 
+    conn = getdb()
     c = conn.cursor()
 
     rows = c.execute('''
@@ -86,7 +92,7 @@ def dnssvg(target=None, start=None, end=None):
     )
     plt.tight_layout()
     plt.grid(True, linestyle='--')
-    svg=StringIO.StringIO()
+    svg=io.StringIO()
     plt.savefig(svg, format='svg')
     plt.close()
     svg.seek(0)
@@ -98,6 +104,7 @@ def dns_reponse_time_page():
 
     start, end = default_time_range()
 
+    conn = getdb()
     c = conn.cursor()
 
     return render_template(
@@ -122,6 +129,7 @@ def rtsvg(target=None, start=None, end=None):
     except:
         return ":)"
 
+    conn = getdb()
     c = conn.cursor()
 
     rows = c.execute('''
@@ -158,10 +166,11 @@ def rtsvg(target=None, start=None, end=None):
     return svg.getvalue()
 
 @app.route("/rt")
-def http_reponse_time_page():
+def http_response_time_page():
 
     start, end = default_time_range()
 
+    conn = getdb()
     c = conn.cursor()
 
     return render_template(
@@ -183,6 +192,7 @@ def bwsvg(start=None, end=None):
     except:
         return ":)"
 
+    conn = getdb()
     c = conn.cursor()
 
     rows = c.execute('''
