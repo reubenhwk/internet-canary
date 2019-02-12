@@ -91,7 +91,7 @@ def dnssvg(target=None, start=None, end=None):
     plt.close()
     svg.seek(0)
 
-    return svg.buf
+    return svg.getvalue()
 
 @app.route("/dns")
 def dns_reponse_time_page():
@@ -155,7 +155,7 @@ def rtsvg(target=None, start=None, end=None):
     plt.close()
     svg.seek(0)
 
-    return svg.buf
+    return svg.getvalue()
 
 @app.route("/rt")
 def http_reponse_time_page():
@@ -217,7 +217,7 @@ def bwsvg(start=None, end=None):
     plt.close()
     svg.seek(0)
 
-    return svg.buf
+    return svg.getvalue()
 
 @app.route("/bw")
 def bandwidth_page():

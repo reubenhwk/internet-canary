@@ -12,7 +12,7 @@ setup(name='InternetCanary',
         ('/etc/internet-canary.d', ['internet-canary.yaml']),
         ('/usr/bin', ['internet-canary.py']),
         ('/var/www/InternetCanaryWebApp', ['InternetCanaryWebApp.wsgi']),
-        ('/etc/httpd/conf.d', ['InternetCanaryWebApp.conf']),
+        ('/etc/apache2/sites-available', ['InternetCanaryWebApp.conf']),
     ]
 )
 
