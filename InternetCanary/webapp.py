@@ -104,9 +104,6 @@ def dns_reponse_time_page():
 
     start, end = default_time_range()
 
-    conn = getdb()
-    c = conn.cursor()
-
     return render_template(
         'rt.txt',
         svgs=[
@@ -165,13 +162,33 @@ def rtsvg(target=None, start=None, end=None):
 
     return svg.getvalue()
 
+@app.route("/rt/last_x_minute/<int:minutes>")
+def http_response_time_last_x_minutes(minutes=1):
+    end = time.time()
+    start = end - minutes * 60
+    return render_template(
+        'rt.txt',
+        svgs=[
+            rtsvg(target, start, end) for target in config['http_targets']
+        ]
+    )
+
+@app.route("/rt/last_x_hours/<int:hours>")
+def http_response_time_last_x_hours(hours=1):
+    return http_response_time_last_x_minutes(hours * 60)
+
+@app.route("/rt/last_x_days/<int:days>")
+def http_response_time_last_x_days(days=1):
+    return http_response_time_last_x_hours(days * 24)
+
+@app.route("/rt/last_x_weeks/<int:weeks>")
+def http_response_time_last_x_weeks(weeks=1):
+    return http_response_time_last_x_days(weeks * 7)
+
 @app.route("/rt")
 def http_response_time_page():
 
     start, end = default_time_range()
-
-    conn = getdb()
-    c = conn.cursor()
 
     return render_template(
         'rt.txt',
@@ -228,6 +245,24 @@ def bwsvg(start=None, end=None):
     svg.seek(0)
 
     return svg.getvalue()
+
+@app.route("/bw/last_x_minute/<int:minutes>")
+def bandwidth_page_last_x_minutes(minutes=1):
+    now = time.time()
+    svg = bwsvg(now - minutes * 60, now)
+    return render_template('bw.txt', svg=svg)
+
+@app.route("/bw/last_x_hours/<int:hours>")
+def bandwidth_page_last_x_hours(hours=1):
+    return bandwidth_page_last_x_minutes(hours * 60)
+
+@app.route("/bw/last_x_days/<int:days>")
+def bandwidth_page_last_x_days(days=1):
+    return bandwidth_page_last_x_hours(days * 24)
+
+@app.route("/bw/last_x_weeks/<int:weeks>")
+def bandwidth_page_last_x_weeks(weeks=1):
+    return bandwidth_page_last_x_days(weeks * 7)
 
 @app.route("/bw")
 def bandwidth_page():

@@ -1,13 +1,9 @@
 <!doctype html>
 <html>
   <body>
-    {{ svg }}
-    <form action='http://35.160.69.193/bw' method='get'>
-      start:<br>
-      <input type="text" name="start"><br>
-      end:<br>
-      <input type="text" name="end"><br>
-      <input type="submit" value="Submit">
-    </form>
+    {{ svg }}</br>
+    <a href='{{ url_for("bandwidth_page_last_x_hours", hours=1) }}'>past 1 hour</a><br/>
+    <a href='{{ url_for("bandwidth_page_last_x_hours", hours=2) }}'>past 2 hour</a><br/>
+    <a href='{{ url_for("bandwidth_page_last_x_hours", hours=3) }}'>past 3 hour</a><br/>
   </body>
 </html>

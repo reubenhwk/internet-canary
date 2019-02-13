@@ -4,12 +4,8 @@
     {% for svg in svgs %}
       {{ svg }}
     {% endfor %}
-    <form action='http://35.160.69.193/rt' method='get'>
-      start:<br>
-      <input type="text" name="start"><br>
-      end:<br>
-      <input type="text" name="end"><br>
-      <input type="submit" value="Submit">
-    </form>
+    <a href='{{ url_for("http_response_time_last_x_hours", hours=1) }}'>past 1 hour</a><br/>
+    <a href='{{ url_for("http_response_time_last_x_hours", hours=2) }}'>past 2 hour</a><br/>
+    <a href='{{ url_for("http_response_time_last_x_hours", hours=3) }}'>past 3 hour</a><br/>
   </body>
 </html>
