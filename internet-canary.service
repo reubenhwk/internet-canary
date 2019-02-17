@@ -1,5 +1,5 @@
 [Unit]
-Description=Internet Canary
+Description=Internet Heathchecking Service
 
 [Service]
 Type=simple
@@ -7,5 +7,3 @@ ExecStart=/usr/bin/internet-canary.py /etc/internet-canary.d/internet-canary.yam
 
 [Install]
 WantedBy=multi-user.target
-After=network-online.target
-Wants=network-online.target
