@@ -2,6 +2,8 @@
 Description=Internet Heathchecking Service
 
 [Service]
+Restart=always
+RestartSec=30
 Type=simple
 ExecStart=/usr/bin/internet-canary.py /etc/internet-canary.d/internet-canary.yaml
 
