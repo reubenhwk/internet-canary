@@ -80,11 +80,14 @@ def canary_dns(db, targets):
     cursor = db.cursor()
     for target in targets:
         now = time.time()
-        result = probe_dns(target, 'A')
-        cursor.execute('''
-           INSERT INTO dns_canary_results (target, time, result)
-           VALUES (?, ?, ?)
-        ''', [target, now, result])
+        try:
+            result = probe_dns(target, 'A')
+            cursor.execute('''
+               INSERT INTO dns_canary_results (target, time, result)
+               VALUES (?, ?, ?)
+            ''', [target, now, result])
+        except dns.resolver.NoNameservers:
+            pass
 
 def canary_http(db, targets):
     cursor = db.cursor()
