@@ -101,11 +101,14 @@ def canary_http(db, targets):
 
 def canary_bandwidth(db):
     now = time.time()
-    bandwidth = probe_speedtest()
-    cursor = db.cursor()
-    cursor.execute('''
-        INSERT INTO bandwidth_canary_results (time, down_speed, up_speed)
-        VALUES (?, ?, ?)
-    ''', [now, bandwidth[0], bandwidth[1]])
+    try:
+        bandwidth = probe_speedtest()
+        cursor = db.cursor()
+        cursor.execute('''
+            INSERT INTO bandwidth_canary_results (time, down_speed, up_speed)
+            VALUES (?, ?, ?)
+        ''', [now, bandwidth[0], bandwidth[1]])
+    except speedtest.ConfigRetrievalError:
+        pass
 
 
