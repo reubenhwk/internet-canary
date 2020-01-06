@@ -1,0 +1,12 @@
+
+To install, do this...
+
+    $ sudo ./setup.py install
+
+To edit the config file, do this...
+
+    $ sudo vim /etc/internet-canary.d/internet-canary.yaml
+
+To see the results, do this...
+
+    $ sqlite3 /var/lib/internet-canary/internet-canary.db
