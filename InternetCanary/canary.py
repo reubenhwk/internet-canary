@@ -108,6 +108,8 @@ def canary_bandwidth(db):
             INSERT INTO bandwidth_canary_results (time, down_speed, up_speed)
             VALUES (?, ?, ?)
         ''', [now, bandwidth[0], bandwidth[1]])
+    except speedtest.SpeedtestBestServerFailure:
+        pass
     except speedtest.ConfigRetrievalError:
         pass
 
