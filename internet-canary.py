@@ -6,6 +6,23 @@ import sys
 import logging as log
 import yaml
 
+def STON(S):
+    return (S * 1000 * 1000 * 1000)
+
+def NTOU(N):
+    return (N / 1000)
+
+def NTOS(N):
+    return (N / (1000 * 1000 * 1000))
+
+def schedule(interval):
+    now = time.time()
+    last = int(now)
+    last -= last % interval
+    sleep_time = interval - (now - last)
+    log.info('sleeping {} seconds...'.format(sleep_time))
+    time.sleep(sleep_time)
+
 if __name__ == '__main__':
     log.basicConfig(level=log.INFO)
     log.info('starting')
@@ -26,6 +43,5 @@ if __name__ == '__main__':
 
         db.commit()
 
-        log.info('sleeping 300 seconds...')
-        time.sleep(300)
+        schedule(300)
     
