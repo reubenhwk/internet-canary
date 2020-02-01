@@ -1,5 +1,6 @@
 ---
 dbpath: /var/lib/internet-canary/internet-canary.db
+interval: 3600
 http_targets:
    - http://localhost/bw
    - http://www.apple.com

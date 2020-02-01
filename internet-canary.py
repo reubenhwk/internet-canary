@@ -34,5 +34,4 @@ if __name__ == '__main__':
 
         db.commit()
 
-        schedule(300)
-    
+        schedule(config['interval'])
