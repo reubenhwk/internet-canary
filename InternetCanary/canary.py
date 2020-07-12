@@ -11,15 +11,29 @@ import dns.resolver
 def probe_dns(hostname, record_type):
     resolver = dns.resolver.Resolver()
     start = time.time()
-    resolver.query(hostname, record_type)
+    try:
+        resolver.query(hostname, record_type)
+    except:
+        pass
     end = time.time()
     return end - start
 
 def probe_speedtest():
     st = speedtest.Speedtest()
     st.get_best_server()
-    down_speed = st.download(callback=speedtest.do_nothing)
-    up_speed = st.upload(callback=speedtest.do_nothing)
+
+    down_speed = 0
+    try:
+        down_speed = st.download(callback=speedtest.do_nothing)
+    except:
+        pass
+
+    up_speed = 0
+    try:
+        up_speed = st.upload(callback=speedtest.do_nothing)
+    except:
+        pass
+
     return down_speed, up_speed
 
 
