@@ -11,41 +11,22 @@ import dns.resolver
 def probe_dns(hostname, record_type):
     resolver = dns.resolver.Resolver()
     start = time.time()
-    try:
-        resolver.query(hostname, record_type)
-    except:
-        pass
+    resolver.query(hostname, record_type)
     end = time.time()
     return end - start
 
 def probe_speedtest():
     st = speedtest.Speedtest()
     st.get_best_server()
-
-    down_speed = 0
-    try:
-        down_speed = st.download(callback=speedtest.do_nothing)
-    except:
-        pass
-
-    up_speed = 0
-    try:
-        up_speed = st.upload(callback=speedtest.do_nothing)
-    except:
-        pass
-
+    down_speed = st.download(callback=speedtest.do_nothing)
+    up_speed = st.upload(callback=speedtest.do_nothing)
     return down_speed, up_speed
 
 
 def probe_http(url, timeout):
-    try:
-        r = requests.get(url, timeout=timeout)
-        if r.status_code == requests.codes.ok:
-            return r.elapsed.total_seconds()
-    except:
-        pass
-
-    return -1
+    r = requests.get(url, timeout=timeout)
+    if r.status_code == requests.codes.ok:
+        return r.elapsed.total_seconds()
 
 def setup_db(dbpath):
 
@@ -100,18 +81,21 @@ def canary_dns(db, targets):
                INSERT INTO dns_canary_results (target, time, result)
                VALUES (?, ?, ?)
             ''', [target, now, result])
-        except dns.resolver.NoNameservers:
+        except:
             pass
 
 def canary_http(db, targets):
     cursor = db.cursor()
     for target in targets:
         now = time.time()
-        result = probe_http(target, 5)
-        cursor.execute('''
-           INSERT INTO http_canary_results (target, time, result)
-           VALUES (?, ?, ?)
-        ''', [target, now, result])
+        try:
+            result = probe_http(target, 5)
+            cursor.execute('''
+               INSERT INTO http_canary_results (target, time, result)
+               VALUES (?, ?, ?)
+            ''', [target, now, result])
+        except:
+            pass
 
 def canary_bandwidth(db):
     now = time.time()
@@ -122,9 +106,6 @@ def canary_bandwidth(db):
             INSERT INTO bandwidth_canary_results (time, down_speed, up_speed)
             VALUES (?, ?, ?)
         ''', [now, bandwidth[0], bandwidth[1]])
-    except speedtest.SpeedtestBestServerFailure:
+    except:
         pass
-    except speedtest.ConfigRetrievalError:
-        pass
-
 
