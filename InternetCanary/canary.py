@@ -7,6 +7,7 @@ import sqlite3
 import sys
 import time
 import dns.resolver
+import logging as log
 
 def probe_dns(hostname, record_type):
     resolver = dns.resolver.Resolver()
@@ -82,6 +83,7 @@ def canary_dns(db, targets):
                VALUES (?, ?, ?)
             ''', [target, now, result])
         except:
+            log.warn('dns canary failed on {}...'.format(target))
             pass
 
 def canary_http(db, targets):
@@ -95,6 +97,7 @@ def canary_http(db, targets):
                VALUES (?, ?, ?)
             ''', [target, now, result])
         except:
+            log.warn('http canary failed on {}...'.format(target))
             pass
 
 def canary_bandwidth(db):
@@ -107,5 +110,6 @@ def canary_bandwidth(db):
             VALUES (?, ?, ?)
         ''', [now, bandwidth[0], bandwidth[1]])
     except:
+        log.warn('bandwidth canary failed...')
         pass
 
