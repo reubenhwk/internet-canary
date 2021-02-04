@@ -1,11 +1,25 @@
 
-To install, do this...
+Install the dependencies.  Run pip3 as root, or sudo -H, so
+pip3 will install the python libs for the right user (root).
+
+    $ sudo -H bash
+    $ apt-get install python3-pip apache2 libapache2-mod-wsgi-py3
+    $ pip3 install speedtest-cli dnspython requests flask
+
+Install the internet-canary...
 
     $ sudo ./setup.py install
 
-To edit the config file, do this...
+Edit the config file...
 
     $ sudo vim /etc/internet-canary.d/internet-canary.yaml
+
+Enable things...
+
+    $ sudo bash
+    $ a2dissite 000-default
+    $ a2ensite InternetCanaryWebApp
+    $ systemctl enable internet-canary
 
 To see the results, do this...
 
