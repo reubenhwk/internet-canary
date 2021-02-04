@@ -221,11 +221,16 @@ def bwsvg(start=None, end=None):
     plt.plot(
         [row[0] for row in rows],
         [row[1]/1000**2 for row in rows],
+        'red',
+        label='upload'
     )
     plt.plot(
         [row[0] for row in rows],
         [row[2]/1000**2 for row in rows],
+        'blue',
+        label='download'
     )
+    plt.legend()
     plt.title('speedtest')
     plt.ylabel('Mbps')
     xmin = start
