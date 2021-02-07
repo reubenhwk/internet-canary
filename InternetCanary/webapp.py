@@ -236,6 +236,7 @@ def bwsvg(start=None, end=None):
     xmin = start
     xmax = end
     plt.xlim(xmin, xmax)
+    plt.ylim(ymin=0)
     r = range(7)
     xticks = [interpolate(xmin, xmax, x / float(len(r)-1)) for x in r]
     plt.xticks(
