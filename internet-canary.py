@@ -5,6 +5,7 @@ import time
 import sys
 import logging as log
 import yaml
+import sqlite3
 
 def schedule(interval):
     now = time.time()
@@ -20,7 +21,7 @@ if __name__ == '__main__':
 
     config = yaml.load(open(sys.argv[1]).read())
 
-    db = canary.setup_db(config['dbpath'])
+    db = sqlite3.connect(config['dbpath'])
 
     while True:
         log.info('running dns canary...')

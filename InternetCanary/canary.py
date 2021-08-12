@@ -29,49 +29,6 @@ def probe_http(url, timeout):
     if r.status_code == requests.codes.ok:
         return r.elapsed.total_seconds()
 
-def setup_db(dbpath):
-
-    path = pathlib.Path(dbpath)
-    path.parent.mkdir(parents=True, exist_ok=True)
-
-    db = sqlite3.connect(dbpath)
-    cursor = db.cursor()
-
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS http_canary_results (
-            target text not null,
-            time real not null,
-            result real not null);
-    ''')
-    cursor.execute('''
-        CREATE INDEX IF NOT EXISTS target_time ON http_canary_results (target, time);
-    ''')
-
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS bandwidth_canary_results (
-            time real not null,
-            down_speed integer not null,
-            up_speed integer not null);
-    ''')
-    cursor.execute('''
-        CREATE INDEX IF NOT EXISTS bandwidth_time ON bandwidth_canary_results (time);
-    ''')
-
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS dns_canary_results (
-            target text not null,
-            time real not null,
-            result real not null);
-    ''')
-    cursor.execute('''
-        CREATE INDEX IF NOT EXISTS dns_time ON dns_canary_results (time);
-    ''')
-
-
-    db.commit()
-
-    return db
-
 def canary_dns(db, targets):
     cursor = db.cursor()
     for target in targets:
